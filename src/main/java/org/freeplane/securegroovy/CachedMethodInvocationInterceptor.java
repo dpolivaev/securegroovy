@@ -10,11 +10,13 @@ import net.bytebuddy.implementation.bind.annotation.SuperCall;
 
 public class CachedMethodInvocationInterceptor {
 	public static <T> T intercept(@SuperCall Callable<T> c, @FieldValue("cachedMethod") Method cachedMethod){
-		try {
-			AccessPermissionChecker.checkAccessPermission(cachedMethod);
+        try {
+    		AccessPermissionChecker.checkAccessPermission(cachedMethod);
+        } catch (IllegalArgumentException e) {
+            throw new InvokerInvocationException(e);
+        }
+        try {
 			return c.call();
-		} catch (IllegalArgumentException e) {
-			throw new InvokerInvocationException(e);
 		} catch (RuntimeException e) {
 			throw e;
 		}

@@ -8,8 +8,8 @@ import net.bytebuddy.implementation.bind.annotation.SuperCall;
 
 public class CachedMethodInterceptor {
 	public static Method intercept(@SuperCall Callable<Method> c, @FieldValue("cachedMethod") Method cachedMethod){
+		AccessPermissionChecker.checkAccessPermission(cachedMethod);
 		try {
-			AccessPermissionChecker.checkAccessPermission(cachedMethod);
 			return c.call();
 		} catch (RuntimeException e) {
 			throw e;
