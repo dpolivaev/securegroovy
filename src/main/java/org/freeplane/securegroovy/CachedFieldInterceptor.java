@@ -3,6 +3,7 @@ package org.freeplane.securegroovy;
 import java.lang.reflect.Field;
 import java.util.concurrent.Callable;
 
+import groovy.lang.GroovyRuntimeException;
 import net.bytebuddy.implementation.bind.annotation.FieldValue;
 import net.bytebuddy.implementation.bind.annotation.SuperCall;
 
@@ -11,7 +12,9 @@ public class CachedFieldInterceptor {
 		try {
 			AccessPermissionChecker.checkAccessPermission(field);
 			return c.call();
-		} catch (RuntimeException e) {
+		} catch (IllegalArgumentException ex) {
+			throw new GroovyRuntimeException("Cannot set the property '" + field.getName() + "'.", ex);
+		}catch (RuntimeException e) {
 			throw e;
 		}
 		catch (Exception e) {
