@@ -5,6 +5,8 @@
 /.project
 /.classpath
 /.settings
+/.idea
+
 
 *.class
 
