@@ -13,10 +13,10 @@ public class GroovyPatcher {
 	private static final String CACHED_METHOD_CLASS = "org.codehaus.groovy.reflection.CachedMethod";
 	
 	public static void apply(Class<?> groovyClass){
-		final ClassLoader pachedClassLoader = groovyClass.getClassLoader();
+		final ClassLoader patchedClassLoader = groovyClass.getClassLoader();
 		final ByteBuddy byteBuddy = new ByteBuddy();
-		TypePool typePool = TypePool.Default.of(pachedClassLoader);
-		final ClassFileLocator classFileLocator = ClassFileLocator.ForClassLoader.of(pachedClassLoader);
+		TypePool typePool = TypePool.Default.of(patchedClassLoader);
+		final ClassFileLocator classFileLocator = ClassFileLocator.ForClassLoader.of(patchedClassLoader);
 
 		final MethodDelegation cachedFieldInterceptor = MethodDelegation.to(CachedFieldInterceptor.class);
 		final Configurable<ClassLoader> strategy = ClassLoadingStrategy.Default.INJECTION.with(groovyClass.getProtectionDomain());
@@ -25,7 +25,7 @@ public class GroovyPatcher {
 		.method(ElementMatchers.named("getProperty")).intercept(cachedFieldInterceptor)
 		.method(ElementMatchers.named("setProperty")).intercept(cachedFieldInterceptor)
 		.make()
-		.load(pachedClassLoader, strategy);
+		.load(patchedClassLoader, strategy);
 
 		final MethodDelegation cachedMethodInterceptor = MethodDelegation.to(CachedMethodInterceptor.class);
 		final MethodDelegation cachedMethodInvocationInterceptor = MethodDelegation.to(CachedMethodInvocationInterceptor.class);
@@ -36,6 +36,6 @@ public class GroovyPatcher {
 		.method(ElementMatchers.named("getCachedMethod")).intercept(cachedMethodInterceptor)
 		.method(ElementMatchers.named("invoke")).intercept(cachedMethodInvocationInterceptor)
 		.make()
-		.load(pachedClassLoader, strategy);
+		.load(patchedClassLoader, strategy);
 	}
 }
