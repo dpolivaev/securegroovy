@@ -55,5 +55,9 @@ publishing {
             }
         }
     }
+	
+	repositories {
+        maven { url "${project.gradle.gradleUserHomeDir}/local-artifacts" }
+    }
 }
 
